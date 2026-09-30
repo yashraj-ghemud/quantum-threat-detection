@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+import _agent_guard
+
+_agent_guard.enforce()
+
 import argparse
 
 import uvicorn

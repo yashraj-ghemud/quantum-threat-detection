@@ -31,6 +31,10 @@ _SRC = Path(__file__).resolve().parent / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
+import _agent_guard  # noqa: E402
+
+_agent_guard.enforce()
+
 from utils.config import ConfigLoader
 from utils.logger import get_logger
 from utils.reproducibility import set_seed, get_run_context

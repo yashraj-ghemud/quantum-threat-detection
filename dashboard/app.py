@@ -15,6 +15,10 @@ if str(src_path) not in sys.path:
 if str(root_path) not in sys.path:
     sys.path.insert(0, str(root_path))
 
+import _agent_guard  # noqa: E402
+
+_agent_guard.enforce()
+
 from dashboard.components import _theme  # noqa: F401  (registers the pastel Plotly template)
 from dashboard.components import metrics
 from dashboard.components import charts
