@@ -1,0 +1,38 @@
+# =============================================================================
+# QVeris Sentinel — engine, protocol, detection and server settings
+# =============================================================================
+
+engine:
+  chunk_size: 1048576
+  model_cache: 256
+
+presets:
+  demo:      { L: 1024, bell_pairs_per_setting: 1000, eps_rob_target: 1.0e-6,  eps_forge_target: 1.0e-4,  eps_rep_target: 1.0e-3,  delta_pe: 1.0e-8,  sprt_alpha: 1.0e-11 }
+  standard:  { L: 4096, bell_pairs_per_setting: 2000, eps_rob_target: 1.0e-9,  eps_forge_target: 1.0e-6,  eps_rep_target: 1.0e-6,  delta_pe: 1.0e-10, sprt_alpha: 1.0e-13 }
+  high:      { L: 8192, bell_pairs_per_setting: 4000, eps_rob_target: 1.0e-12, eps_forge_target: 1.0e-12, eps_rep_target: 1.0e-12, delta_pe: 1.0e-14, sprt_alpha: 1.0e-17 }
+  analysis:  { L: 1024, bell_pairs_per_setting: 1000, digest_bits: 32, analysis_only: true, f_pe: 0.25, eps_rob_target: 1.0e-6, eps_forge_target: 1.0e-3, eps_rep_target: 1.0e-3, delta_pe: 1.0e-8, sprt_alpha: 1.0e-10 }
+
+protocol:
+  digest_bits: 256
+  f_pe: 0.10
+  delta_bell: 1.0e-5
+  freshness_window_s: 120
+  sprt_beta: 1.0e-6
+  bundle_ttl_s: 86400
+
+detection:
+  alpha_family: 1.0e-6
+  enforce: true
+  floors: { chsh_drop: 0.10, fidelity_drop: 0.02, qber_rise: 0.01, tomography_max_dev: 0.04, consistency: 0.01 }
+  cusum: { qber_k: 0.0025, qber_h: 0.015, chsh_k: 0.02, chsh_h: 0.12, ewma_lambda: 0.2 }
+  calibration: { pe_samples: 400000, bell_pairs_per_setting: 20000 }
+
+server:
+  active_preset: standard
+  compute_workers: 2
+  traffic_rate_per_min: 12
+  reservoir_target: 3
+  block_max_txs: 16
+  block_max_age_s: 8
+
+hardware_model: { source_rate_hz: 1.0e+7, fibre_loss_db_per_km: 0.2, detector_efficiency: 0.9 }

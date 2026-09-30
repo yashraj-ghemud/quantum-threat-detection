@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QVeris Attack Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #1E2440; --ink2: #5A6384; --lav: #8C84F0; --mint: #4FC3A1; --sky: #6FA8F0; --coral: #E8697A; --peach: #F4A77A;
+    --surface: rgba(243,244,251,.8); --line: rgba(30,36,64,.1); --ease: cubic-bezier(.2,.8,.2,1); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #EAEDF7; color: var(--ink); font-family: Inter, system-ui, sans-serif; cursor: none; }
+  @media (pointer: coarse) { html, body { cursor: auto; } }
+  #view { position: absolute; inset: 0; border-radius: 22px; overflow: hidden; }
+  #stage { position: absolute; inset: 0; } #stage canvas { width: 100% !important; height: 100% !important; }
+  .glass { background: var(--surface); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    border: 1px solid rgba(255,255,255,.65); box-shadow: 0 1px 0 rgba(255,255,255,.7) inset, 0 20px 50px -24px rgba(76,70,160,.4); border-radius: 18px; }
+  #head { position: absolute; left: 18px; top: 16px; padding: 12px 16px; max-width: 58%; }
+  #title { font: 700 12px "JetBrains Mono", monospace; letter-spacing: .24em; color: var(--lav); }
+  #sub { font: 700 20px "Space Grotesk", sans-serif; letter-spacing: -.02em; margin-top: 4px; text-transform: capitalize; }
+  #pills { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .pill { font: 600 11px Inter, sans-serif; padding: 4px 10px; border-radius: 999px; color: var(--ink2); background: rgba(30,36,64,.05); transition: all .5s var(--ease); }
+  .pill.on { background: var(--lav); color: #F7F7FD; transform: translateY(-1px); box-shadow: 0 8px 16px -8px rgba(140,132,240,.9); }
+  .pill.done { color: var(--lav); background: rgba(140,132,240,.12); }
+  #metrics { position: absolute; right: 18px; top: 16px; width: 290px; padding: 14px 16px; opacity: 0; transform: translateX(24px); transition: all .8s var(--ease); }
+  #metrics.show { opacity: 1; transform: none; }
+  #metrics.idle { display: none; }
+  .meter { margin-bottom: 12px; }
+  .meter .row { display: flex; justify-content: space-between; align-items: baseline; font: 600 11px Inter, sans-serif; color: var(--ink2); letter-spacing: .05em; text-transform: uppercase; }
+  .meter b { font: 700 14px "JetBrains Mono", monospace; color: var(--ink); text-transform: none; }
+  .track { position: relative; height: 8px; border-radius: 8px; background: rgba(30,36,64,.07); margin-top: 6px; overflow: visible; }
+  .f { position: absolute; inset: 0; border-radius: 8px; transform-origin: 0 50%; transform: scaleX(0); background: linear-gradient(90deg, var(--mint), var(--sky)); }
+  #m-anom .f { background: linear-gradient(90deg, var(--mint), var(--peach) 60%, var(--coral)); }
+  #m-mis .f { background: linear-gradient(90deg, var(--peach), var(--coral)); }
+  .m i { position: absolute; top: -4px; width: 3px; height: 16px; border-radius: 2px; margin-left: -1.5px; }
+  .verdict { margin-top: 6px; padding: 10px 12px; border-radius: 14px; background: rgba(30,36,64,.05); opacity: 0; transform: scale(.94); transition: all .7s var(--ease); }
+  .verdict.show { opacity: 1; transform: none; }
+  .verdict b { display: block; font: 700 22px "Space Grotesk", sans-serif; letter-spacing: -.02em; }
+  .verdict span { font: 500 12px Inter, sans-serif; color: var(--ink2); }
+  .verdict.ok { background: rgba(79,195,161,.16); } .verdict.ok b { color: #2E9E7F; }
+  .verdict.warn { background: rgba(244,167,122,.2); } .verdict.warn b { color: #C0703F; }
+  .verdict.bad { background: rgba(232,105,122,.16); } .verdict.bad b { color: #D04E61; }
+  #reason, #auth { font: 400 11.5px/1.45 Inter, sans-serif; color: var(--ink2); margin-top: 8px; }
+  #auth { font-family: "JetBrains Mono", monospace; color: var(--coral); }
+  #beat { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); max-width: min(620px, 70%); text-align: center; padding: 10px 16px;
+    font: 500 13.5px/1.5 Inter, sans-serif; color: var(--ink); }
+  #controls { position: absolute; left: 18px; bottom: 16px; display: flex; gap: 10px; align-items: center; }
+  #replay { cursor: none; border: 0; border-radius: 999px; padding: 9px 16px; font: 600 13px Inter, sans-serif; color: #F7F7FD;
+    background: linear-gradient(120deg, var(--lav), var(--sky)); box-shadow: 0 10px 22px -10px rgba(140,132,240,.9); transition: transform .35s var(--ease); }
+  #replay:hover { transform: translateY(-2px) scale(1.03); }
+  #hint { font: 500 11px "JetBrains Mono", monospace; color: var(--ink2); transition: opacity .6s; }
+  #hint.used { opacity: 0; }
+  #theory { position: absolute; left: 18px; bottom: 62px; max-width: min(460px, 60%); padding: 12px 14px; transition: opacity .6s; }
+  #theory.dim { opacity: .55; }
+  #th-head { font: 700 10.5px "JetBrains Mono", monospace; letter-spacing: .18em; color: var(--lav); margin-bottom: 6px; }
+  #th-lines div { font: 500 12px/1.55 "JetBrains Mono", monospace; color: var(--ink); }
+  #th-lines .note { color: var(--ink2); }
+  #count { font: 700 13px "Space Grotesk", sans-serif; color: var(--mint); margin-top: 6px; }
+  #metrics.on { opacity: 1; transform: none; }
+  #metrics.on.doc { opacity: .12; transform: translateX(12px); }
+  #m-stale { font: 600 10.5px "JetBrains Mono", monospace; color: var(--peach); margin-bottom: 6px; }
+  #m-stale:empty { display: none; }
+  #evidence { font: 400 11px/1.5 "JetBrains Mono", monospace; color: var(--ink2); margin-top: 8px; max-height: 96px; overflow: hidden; }
+  .verdict.miss { background: rgba(232,105,122,.12); } .verdict.miss b { color: #D04E61; }
+  #tip { position: absolute; left: 0; top: 0; max-width: 240px; padding: 10px 12px; border-radius: 12px; pointer-events: none; opacity: 0;
+    background: rgba(246,247,253,.94); border: 1px solid rgba(255,255,255,.7); box-shadow: 0 16px 36px -16px rgba(30,36,64,.4); transition: opacity .2s; z-index: 6; }
+  #tip.on { opacity: 1; }
+  #tip b { font: 700 13px "Space Grotesk", sans-serif; } #tip span { font: 600 10px "JetBrains Mono", monospace; color: var(--lav); margin-left: 6px; }
+  #tip p { margin: 4px 0 0; font: 500 11.5px/1.45 "JetBrains Mono", monospace; color: var(--ink2); }
+  @media (max-width: 760px) { #metrics { width: 200px; } #head { max-width: 50%; } #beat { max-width: 90%; bottom: 60px; } }
+</style>
+<!--QV_HEAD-->
+</head>
+<body>
+<div id="view">
+  <div id="stage"></div>
+  <div id="head" class="glass">
+    <div id="title"></div><div id="sub"></div>
+    <div id="pills"><span class="pill">Configure</span><span class="pill">Stream</span><span class="pill">Measure</span><span class="pill">Detect</span><span class="pill">Verdict</span></div>
+  </div>
+  <div id="theory" class="glass"><div id="th-head"></div><div id="th-lines"></div><div id="count"></div></div>
+  <div id="metrics" class="glass">
+    <div id="m-stale"></div>
+    <div class="meter" id="m-anom"><div class="row">Anomaly score <b></b></div><div class="track"><i class="f"></i><div class="m"></div></div></div>
+    <div class="meter" id="m-mis"><div class="row">Mismatch rate <b></b></div><div class="track"><i class="f"></i><div class="m"></div></div></div>
+    <div class="meter" id="m-ver"><div class="row">Verification <b></b></div><div class="track"><i class="f"></i><div class="m"></div></div></div>
+    <div id="verdict" class="verdict"><b></b><span></span></div>
+    <div id="evidence"></div>
+  </div>
+  <div id="tip"></div>
+  <div id="controls"><button id="replay">↻ Replay run</button><span id="hint">drag to orbit</span></div>
+</div>
+<!--QV_SCRIPT-->
+</body>
+</html>

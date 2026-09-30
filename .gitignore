@@ -1,0 +1,108 @@
+# =============================================================================
+# .gitignore — Quantum-Inspired Cyber Threat Detection (SIH26141)
+# =============================================================================
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+/lib/
+/lib64/
+MANIFEST
+
+# --- Virtual environments ---
+.venv/
+venv/
+ENV/
+env/
+.env
+.env.*
+!.env.example
+
+# --- Packaging ---
+*.whl
+*.tar.gz
+
+# --- Testing & coverage ---
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+*.lcov
+nosetests.xml
+test-results/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+*.ipynb
+
+# --- IDEs & editors ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- Qiskit / simulation artefacts ---
+*.qasm
+*.qobj
+*.json.bak
+
+# --- Logs ---
+logs/
+*.log
+
+# --- Experiment outputs ---
+experiments/outputs/
+experiments/results/
+experiments/*.pkl
+experiments/*.npz
+experiments/*.npy
+
+# --- Dashboard build artefacts ---
+dashboard/dist/
+dashboard/node_modules/
+
+# --- Documentation build ---
+docs/_build/
+docs/site/
+
+# --- Secrets ---
+secrets/
+*.pem
+*.key
+*.crt
+*.p12
+
+# --- Debug / scratch output (never part of the deliverable) ---
+# These accumulated in the repo root from redirected console runs and were
+# committed by accident; several contained garbled Windows console output
+# from old ModuleNotFoundError crashes.
+out*.txt
+err*.txt
+exp_*.txt
+experiment_output.txt
+full_*.txt
+test_*.txt
+*_utf8.txt
+tmp_runner*.py
+nul
+
+# QVeris runtime data (SQLite + keystore)
+data/

@@ -1,0 +1,13 @@
+import { chromium } from '@playwright/test';
+const [,, attack = 'channel.dephase', out = 'a.png', full = 'a-full.png', w = '1440', h = '1000', wait = '9000'] = process.argv;
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--use-gl=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist'] });
+const p = await b.newPage({ viewport: { width: +w, height: +h } });
+const logs = []; p.on('console', (m) => { if (m.type() === 'error') logs.push(m.text().slice(0, 200)); }); p.on('pageerror', (e) => logs.push('pageerror ' + e.message));
+await p.addInitScript(() => sessionStorage.setItem('qveris.booted', '1'));
+await p.goto(`http://127.0.0.1:5173/attack-lab?attack=${attack}&intensity=0.6`); await p.waitForTimeout(3000);
+const btn = p.locator('.hold-btn'); await btn.scrollIntoViewIfNeeded(); const box = await btn.boundingBox();
+await p.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await p.mouse.down(); await p.waitForTimeout(900); await p.mouse.up();
+await p.waitForTimeout(+wait); await p.evaluate(() => scrollTo(0, 0)); await p.waitForTimeout(500); await p.screenshot({ path: out });
+await p.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 500) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 80)); } scrollTo(0, 0); });
+await p.waitForTimeout(2500); await p.screenshot({ path: full, fullPage: true });
+console.log(logs.join('\n') || 'no errors'); await b.close();

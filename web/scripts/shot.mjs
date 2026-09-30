@@ -1,0 +1,13 @@
+import { chromium } from '@playwright/test';
+const [,, url = 'http://127.0.0.1:5173/command', out = 'shot.png', w = '1440', h = '900', wait = '3000'] = process.argv;
+const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--use-gl=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist'] });
+const page = await browser.newPage({ viewport: { width: +w, height: +h }, deviceScaleFactor: 1 });
+const logs = [];
+page.on('console', (m) => { if (['error', 'warning'].includes(m.type())) logs.push(`${m.type()}: ${m.text()}`); });
+page.on('pageerror', (e) => logs.push(`pageerror: ${e.message}`));
+await page.addInitScript(() => { try { sessionStorage.setItem('qveris.booted', '1'); } catch {} });
+await page.goto(url, { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(+wait);
+await page.screenshot({ path: out, fullPage: process.env.FULL === '1' });
+console.log(logs.slice(0, 30).join('\n') || 'no console errors');
+await browser.close();

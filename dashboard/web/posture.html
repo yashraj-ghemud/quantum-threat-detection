@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Security Posture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #1E2440; --ink2: #5A6384; --lav: #8C84F0; --mint: #4FC3A1; --sky: #6FA8F0; --coral: #E8697A; --peach: #F4A77A; --gold: #E8B860; --ease: cubic-bezier(.2,.8,.2,1); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: transparent; color: var(--ink); font-family: Inter, system-ui, sans-serif; cursor: none; overflow: hidden; }
+  @media (pointer: coarse) { html, body { cursor: auto; } }
+  .wrap { display: grid; grid-template-columns: 260px 1fr; gap: 16px; padding: 4px 4px 12px; }
+  .glass { background: linear-gradient(150deg, #F3F4FB, #ECEFF9); border: 1px solid rgba(255,255,255,.7); border-radius: 22px;
+    box-shadow: 0 1px 0 rgba(255,255,255,.7) inset, 0 16px 36px -20px rgba(76,70,160,.4); position: relative; overflow: hidden; }
+  .seal { padding: 20px 22px; display: flex; flex-direction: column; justify-content: space-between; }
+  .seal .k { font: 700 11px "JetBrains Mono", monospace; letter-spacing: .22em; color: var(--lav); }
+  .seal .state { font: 700 38px/1 "Space Grotesk", sans-serif; letter-spacing: -.03em; margin: 10px 0 4px; }
+  .seal .state.ok { color: #2E9E7F; } .seal .state.bad { color: #D04E61; }
+  .seal .sub { font: 500 12.5px Inter, sans-serif; color: var(--ink2); }
+  .seal .orb { position: absolute; right: -40px; top: -40px; width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.9), rgba(79,195,161,.35) 45%, rgba(79,195,161,0) 70%); animation: breathe 5s ease-in-out infinite; }
+  .seal .orb.bad { background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.9), rgba(232,105,122,.35) 45%, rgba(232,105,122,0) 70%); }
+  @keyframes breathe { 50% { transform: scale(1.12); } }
+  .bars { display: flex; gap: 6px; align-items: flex-end; height: 44px; margin-top: 12px; }
+  .bars div { flex: 1; border-radius: 6px 6px 3px 3px; height: 0; transition: height 1.2s var(--ease); position: relative; }
+  .bars div span { position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%); font: 600 9px "JetBrains Mono", monospace; color: var(--ink2); }
+  .rings { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .ring { padding: 14px 10px 12px; text-align: center; transition: transform .5s var(--ease), box-shadow .5s var(--ease); }
+  .ring:hover { transform: translateY(-4px); box-shadow: 0 1px 0 rgba(255,255,255,.7) inset, 0 24px 44px -20px rgba(76,70,160,.55); }
+  .ring svg { width: 104px; height: 104px; display: block; margin: 0 auto; transform: rotate(-90deg); }
+  .ring circle { fill: none; stroke-width: 9; stroke-linecap: round; }
+  .ring .bg { stroke: rgba(30,36,64,.07); }
+  .ring .fg { transition: stroke-dashoffset 1.6s var(--ease); }
+  .ring .ci { stroke-width: 3; opacity: .5; transition: stroke-dashoffset 1.6s var(--ease); }
+  .ring .val { font: 700 16px "Space Grotesk", sans-serif; letter-spacing: -.02em; margin-top: -64px; height: 50px; }
+  .ring .lbl { font: 600 10.5px Inter, sans-serif; color: var(--ink2); letter-spacing: .06em; text-transform: uppercase; margin-top: 10px; }
+  .ring .ci-t { font: 500 10.5px "JetBrains Mono", monospace; color: var(--ink2); margin-top: 3px; min-height: 14px; }
+  .prov { grid-column: 1 / -1; font: 500 11px "JetBrains Mono", monospace; color: var(--ink2); padding: 0 6px; }
+  @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } .rings { grid-template-columns: repeat(3, 1fr); } }
+</style>
+</head>
+<body>
+<div class="wrap" id="wrap"></div>
+<script>
+window.QV_POSTURE = /*QV_DATA*/null;
+(function () {
+  var D = window.QV_POSTURE || {}, m = D.metrics || {}, cfg = D.config || {}, atk = D.attacks || [];
+  var C = { lav: '#8C84F0', mint: '#4FC3A1', sky: '#6FA8F0', coral: '#E8697A', peach: '#F4A77A', gold: '#E8B860' };
+  var AC = { FORGERY: C.coral, IMPERSONATION: C.lav, REPLAY: C.gold, UNAUTHORIZED_VERIFICATION: C.sky, CHANNEL_MANIPULATION: C.peach };
+  var secure = m.f1 != null && m.f1 > 0.9;
+  var pct = function (x, d) { return x == null ? 'n/a' : (x * 100).toFixed(d == null ? 2 : d) + '%'; };
+  var ci = function (c) { return c && c.length === 2 ? '[' + (c[0] * 100).toFixed(2) + ', ' + (c[1] * 100).toFixed(2) + ']' : ''; };
+  // Rings: value in [0,1] mapped to the arc. FAR/FRR are "lower is better", so they use coral/sky.
+  var rings = [
+    { k: 'Detection rate', v: m.detection_rate, c: C.mint, t: pct(m.detection_rate), ci: m.detection_rate_ci },
+    { k: 'Accuracy', v: m.accuracy, c: C.lav, t: pct(m.accuracy) },
+    { k: 'False acceptance', v: m.far, c: C.coral, t: pct(m.far), ci: m.far_ci, n: m.far_n, low: true },
+    { k: 'False rejection', v: m.frr, c: C.sky, t: pct(m.frr), ci: m.frr_ci, n: m.frr_n, low: true },
+    { k: 'F1 score', v: m.f1, c: C.gold, t: pct(m.f1) },
+    { k: 'Teleport fidelity', v: m.mean_teleportation_fidelity, c: C.peach, t: m.mean_teleportation_fidelity != null ? m.mean_teleportation_fidelity.toFixed(4) : 'n/a' },
+  ];
+  var R = 38, L = 2 * Math.PI * R;
+  var html = '<div class="glass seal"><div class="orb ' + (secure ? '' : 'bad') + '"></div>' +
+    '<div><div class="k">SYSTEM SECURITY POSTURE</div><div class="state ' + (secure ? 'ok' : 'bad') + '">' + (m.f1 == null ? 'UNKNOWN' : secure ? 'SECURE' : 'DEGRADED') + '</div>' +
+    '<div class="sub">τ = ' + (m.threshold != null ? m.threshold.toFixed(5) : 'n/a') + ' · ' + (cfg.trials_per_class || '?') + ' sessions per class</div></div>' +
+    '<div class="bars" id="bars">' + atk.map(function (a) { return '<div data-h="' + a.rate + '" style="background:' + (AC[a.type] || C.lav) + '" title="' + a.type + ': ' + pct(a.rate) + '"><span>' + a.type.slice(0, 3) + '</span></div>'; }).join('') + '</div></div>';
+  html += '<div class="rings">' + rings.map(function (r, i) {
+    var v = r.v == null ? 0 : Math.max(0, Math.min(1, r.low ? r.v * 8 : r.v)); // low-is-good rates are magnified ×8 so they are visible
+    var lo = r.ci ? Math.max(0, Math.min(1, r.low ? r.ci[1] * 8 : r.ci[0])) : null;
+    return '<div class="glass ring" title="' + (r.ci ? '95% CI ' + ci(r.ci) : '') + (r.n ? ' · n = ' + r.n : '') + '">' +
+      '<svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="' + R + '"/>' +
+      (lo != null ? '<circle class="ci" cx="50" cy="50" r="' + (R + 7) + '" stroke="' + r.c + '" stroke-dasharray="' + (2 * Math.PI * (R + 7)) + '" stroke-dashoffset="' + (2 * Math.PI * (R + 7)) + '" data-t="' + lo + '"/>' : '') +
+      '<circle class="fg" cx="50" cy="50" r="' + R + '" stroke="' + r.c + '" stroke-dasharray="' + L + '" stroke-dashoffset="' + L + '" data-t="' + v + '"/></svg>' +
+      '<div class="val" data-final="' + r.t + '" data-num="' + (r.v == null ? '' : r.v) + '">0</div>' +
+      '<div class="lbl">' + r.k + '</div><div class="ci-t">' + (r.ci ? ci(r.ci) : r.low ? '' : '') + (r.low ? ' ×8 scale' : '') + '</div></div>';
+  }).join('') + '</div>';
+  html += '<div class="prov">measured · experiments/results/final · run ' + (cfg.timestamp_utc || 'unknown') + ' · seed ' + (cfg.seed != null ? cfg.seed : '?') + ' · FAR/FRR rings are magnified ×8 because low is good</div>';
+  document.getElementById('wrap').innerHTML = html;
+
+  // Animate in: arcs sweep, bars grow, numbers count up.
+  function play() {
+    document.querySelectorAll('circle[data-t]').forEach(function (c, i) {
+      var len = parseFloat(c.getAttribute('stroke-dasharray'));
+      setTimeout(function () { c.style.strokeDashoffset = len * (1 - parseFloat(c.dataset.t)); }, 120 + i * 90);
+    });
+    document.querySelectorAll('#bars div').forEach(function (b, i) { setTimeout(function () { b.style.height = (8 + 36 * parseFloat(b.dataset.h)) + 'px'; }, 300 + i * 80); });
+    document.querySelectorAll('.val').forEach(function (el, i) {
+      var target = parseFloat(el.dataset.num), fin = el.dataset.final;
+      if (isNaN(target)) { el.textContent = fin; return; }
+      var isPct = fin.indexOf('%') > 0, t0 = performance.now() + i * 90, dur = 1500;
+      (function tick(now) {
+        var k = Math.min(1, Math.max(0, (now - t0) / dur)), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = isPct ? (target * e * 100).toFixed(2) + '%' : (target * e).toFixed(4);
+        if (k < 1) requestAnimationFrame(tick); else el.textContent = fin;
+      })(performance.now());
+    });
+  }
+  // Start when the header scrolls into view.
+  var started = false;
+  function check() {
+    if (started) return;
+    try { var r = window.frameElement.getBoundingClientRect(); if (r.top < window.parent.innerHeight * 0.9) { started = true; play(); } }
+    catch (e) { started = true; play(); }
+  }
+  setInterval(check, 250); check();
+  // Keep the page's custom cursor alive over this frame.
+  try {
+    var P = window.parent, f = window.frameElement;
+    document.addEventListener('pointermove', function (e) { var r = f.getBoundingClientRect(); if (P.__qvFx) P.__qvFx.bridgeMove(e.clientX + r.left, e.clientY + r.top); });
+    document.addEventListener('pointerdown', function (e) { var r = f.getBoundingClientRect(); if (P.__qvFx) P.__qvFx.bridgeDown(e.clientX + r.left, e.clientY + r.top); });
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>

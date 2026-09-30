@@ -1,0 +1,161 @@
+/* QVeris light pastel theme for the Streamlit page. Colours carry the
+   story's meaning: lavender = Alice/signer, mint = Bob/verified,
+   sky = quantum channel, coral = Eve/threat. Never pure white. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+  --qv-bg: #EAEDF7; --qv-bg2: #E1E6F3; --qv-surface: #F3F4FB; --qv-surface2: #ECEFF9;
+  --qv-ink: #1E2440; --qv-ink2: #5A6384; --qv-line: rgba(30, 36, 64, .09);
+  --qv-lav: #8C84F0; --qv-lav-l: #DCD9FB; --qv-mint: #4FC3A1; --qv-mint-d: #2E9E7F; --qv-mint-l: #D2F1E7;
+  --qv-sky: #6FA8F0; --qv-sky-l: #D6E6FB; --qv-gold: #E8B860; --qv-peach: #F4A77A;
+  --qv-coral: #E8697A; --qv-coral-d: #D04E61; --qv-coral-l: #F9D6DB;
+  --qv-shadow: 0 1px 0 rgba(255, 255, 255, .7) inset, 0 1px 2px rgba(30, 36, 64, .05), 0 14px 34px -18px rgba(76, 70, 160, .32);
+  --qv-radius: 18px;
+  --qv-ease: cubic-bezier(.2, .8, .2, 1);
+}
+
+/* ---------------------------------------------------------------- base -- */
+.stApp { background: var(--qv-bg); color: var(--qv-ink); font-family: Inter, system-ui, sans-serif; }
+.stApp::before {
+  content: ''; position: fixed; inset: -20%; z-index: 0; pointer-events: none; opacity: .9; will-change: transform;
+  background:
+    radial-gradient(38% 34% at 18% 22%, rgba(140, 132, 240, .22), transparent 70%),
+    radial-gradient(34% 30% at 82% 18%, rgba(111, 168, 240, .2), transparent 70%),
+    radial-gradient(40% 36% at 70% 82%, rgba(79, 195, 161, .16), transparent 70%),
+    radial-gradient(30% 28% at 24% 86%, rgba(244, 167, 122, .12), transparent 70%);
+  animation: qv-aurora 34s ease-in-out infinite alternate;
+}
+@keyframes qv-aurora {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  50% { transform: translate3d(3%, -2%, 0) rotate(8deg) scale(1.06); }
+  100% { transform: translate3d(-3%, 3%, 0) rotate(-6deg) scale(1.02); }
+}
+[data-testid="stAppViewContainer"], [data-testid="stMain"], section.main { background: transparent; position: relative; z-index: 1; }
+header[data-testid="stHeader"] { background: transparent; pointer-events: none; }
+header[data-testid="stHeader"] [data-testid="stToolbar"], header[data-testid="stHeader"] [data-testid="stToolbar"] *,
+header[data-testid="stHeader"] button, header[data-testid="stHeader"] a { pointer-events: auto; }
+[data-testid="stDecoration"] { display: none; }
+.block-container, [data-testid="stMainBlockContainer"] { padding-top: 1.2rem; padding-left: 2.2rem; padding-right: 2.2rem; max-width: 100%; }
+h1, h2, h3, h4, [data-testid="stHeading"] * { font-family: "Space Grotesk", Inter, sans-serif !important; letter-spacing: -.025em; color: var(--qv-ink); }
+h3 { font-weight: 700; }
+p, li, label, .stMarkdown { color: var(--qv-ink); }
+[data-testid="stCaptionContainer"], .stCaption, small { color: var(--qv-ink2) !important; }
+code { font-family: "JetBrains Mono", monospace !important; color: var(--qv-lav) !important; background: rgba(140, 132, 240, .1) !important; border-radius: 6px; }
+hr { border-color: var(--qv-line) !important; }
+::selection { background: var(--qv-lav-l); color: var(--qv-ink); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(140, 132, 240, .35); border-radius: 10px; border: 3px solid var(--qv-bg); }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* The story hero's height and full-bleed width are set by story.js through
+   CSS variables, because Streamlit re-renders reset inline styles. */
+[data-testid="stElementContainer"]:has(> iframe[data-qv="story"]), .element-container:has(> iframe[data-qv="story"]) {
+  height: var(--qv-hero-h, 100vh) !important; flex: 0 0 var(--qv-hero-h, 100vh) !important; position: relative !important; max-width: none !important;
+  width: var(--qv-bleed-w, 100%) !important; margin-left: var(--qv-bleed-l, 0px) !important; margin-top: var(--qv-bleed-t, 0px) !important; margin-bottom: 1.5rem;
+}
+/* Zero-height helper iframes should not take layout space. */
+[data-testid="stElementContainer"]:has(> iframe[height="0"]), .element-container:has(> iframe[height="0"]) { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* ----------------------------------------------------------- metrics -- */
+[data-testid="stMetric"] {
+  position: relative; overflow: hidden; padding: 16px 18px 14px; border-radius: var(--qv-radius);
+  background: linear-gradient(150deg, var(--qv-surface), var(--qv-surface2));
+  border: 1px solid rgba(255, 255, 255, .65); box-shadow: var(--qv-shadow);
+  transition: box-shadow .4s var(--qv-ease), transform .5s var(--qv-ease); transform-style: preserve-3d; will-change: transform;
+}
+[data-testid="stMetric"]::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .4s;
+  background: radial-gradient(260px circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, .75), transparent 60%);
+}
+[data-testid="stMetric"].qv-tilting { transition: box-shadow .4s var(--qv-ease); box-shadow: 0 1px 0 rgba(255,255,255,.7) inset, 0 26px 50px -22px rgba(76, 70, 160, .45); }
+[data-testid="stMetric"].qv-tilting::after { opacity: 1; }
+[data-testid="stMetricLabel"] * { font: 600 12px Inter, sans-serif !important; letter-spacing: .06em; text-transform: uppercase; color: var(--qv-ink2) !important; }
+[data-testid="stMetricValue"] { font-family: "Space Grotesk", sans-serif; font-weight: 700; letter-spacing: -.03em; color: var(--qv-ink); }
+[data-testid="stMetricDelta"] { font-family: "JetBrains Mono", monospace; font-size: 12px; }
+
+/* ----------------------------------------------------------- buttons -- */
+.stButton > button, .stDownloadButton > button, .stFormSubmitButton > button {
+  border-radius: 999px; border: 1px solid var(--qv-line); background: var(--qv-surface); color: var(--qv-ink);
+  font-weight: 600; padding: .5rem 1.2rem; box-shadow: 0 6px 16px -10px rgba(30, 36, 64, .35);
+  transition: transform .35s var(--qv-ease), box-shadow .35s var(--qv-ease), background .3s, color .3s;
+}
+.stButton > button:hover { color: var(--qv-lav); border-color: rgba(140, 132, 240, .45); box-shadow: 0 14px 26px -14px rgba(140, 132, 240, .8); }
+.stButton > button:active { transform: scale(.97) !important; }
+.stButton > button[kind="primary"], [data-testid="stBaseButton-primary"] {
+  background: linear-gradient(120deg, var(--qv-lav), var(--qv-sky)); color: #F7F7FD; border: 0;
+  box-shadow: 0 12px 26px -12px rgba(140, 132, 240, .95);
+}
+.stButton > button[kind="primary"]:hover, [data-testid="stBaseButton-primary"]:hover { color: #FFFFFF; box-shadow: 0 18px 36px -14px rgba(140, 132, 240, 1); }
+.qv-ripple { position: absolute; border-radius: 50%; pointer-events: none; background: radial-gradient(circle, rgba(255, 255, 255, .7), rgba(140, 132, 240, .25) 60%, transparent 70%); transform: scale(0); animation: qv-ripple .7s var(--qv-ease) forwards; }
+@keyframes qv-ripple { to { transform: scale(1); opacity: 0; } }
+
+/* -------------------------------------------------------------- tabs -- */
+/* Streamlit >= 1.5x renders React Aria tabs; older builds use BaseWeb. */
+[data-testid="stTabs"] [role="tablist"], [data-baseweb="tab-list"] {
+  gap: 4px; background: rgba(225, 230, 243, .85); padding: 6px; border-radius: 999px; width: fit-content; max-width: 100%;
+  overflow-x: auto; border: 0 !important; box-shadow: inset 0 1px 2px rgba(30, 36, 64, .06); backdrop-filter: blur(8px);
+}
+[data-testid="stTabs"] [role="tablist"] > :not([role="tab"]) { display: none !important; }
+[data-testid="stTab"], [data-testid="stTabs"] [role="tab"], [data-baseweb="tab"] {
+  border-radius: 999px !important; padding: 8px 16px !important; background: transparent !important; border: 0 !important;
+  transition: background .35s var(--qv-ease), color .3s, box-shadow .35s, transform .35s var(--qv-ease); height: auto !important;
+}
+[data-testid="stTabs"] [role="tab"]::after, [data-testid="stTabs"] [role="tab"]::before { display: none !important; }
+/* The sliding underline is an unlabelled absolute child of the active tab. */
+[data-testid="stTabs"] [role="tab"] > div:not([data-testid]) { display: none !important; }
+[data-testid="stTabs"] [role="tab"] p, [data-baseweb="tab"] p { font-weight: 600; font-size: 14px; color: var(--qv-ink2); }
+[data-testid="stTabs"] [role="tab"]:hover p { color: var(--qv-ink); }
+[data-testid="stTabs"] [role="tab"]:hover { transform: translateY(-1px); }
+[data-testid="stTabs"] [role="tab"][aria-selected="true"], [data-baseweb="tab"][aria-selected="true"] {
+  background: var(--qv-surface) !important; box-shadow: 0 8px 18px -10px rgba(76, 70, 160, .55), 0 0 0 1px rgba(255, 255, 255, .7) inset;
+}
+[data-testid="stTabs"] [role="tab"][aria-selected="true"] p, [data-baseweb="tab"][aria-selected="true"] p { color: var(--qv-lav); }
+[data-baseweb="tab-highlight"], [data-baseweb="tab-border"] { display: none !important; }
+[data-testid="stTabs"] [role="tabpanel"], [data-testid="stTabPanel"], [data-baseweb="tab-panel"] { animation: qv-panel .6s var(--qv-ease); }
+@keyframes qv-panel { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+/* ------------------------------------------------------------ inputs -- */
+[data-baseweb="select"] > div, [data-baseweb="input"], .stNumberInput > div > div, .stTextInput > div > div {
+  border-radius: 14px !important; background: var(--qv-surface) !important; border-color: var(--qv-line) !important;
+  transition: box-shadow .3s, border-color .3s;
+}
+[data-baseweb="select"] > div:focus-within, [data-baseweb="input"]:focus-within { border-color: var(--qv-lav) !important; box-shadow: 0 0 0 4px rgba(140, 132, 240, .15) !important; }
+[data-baseweb="popover"] ul { background: var(--qv-surface) !important; border-radius: 14px; }
+[data-testid="stSlider"] [role="slider"] { box-shadow: 0 0 0 6px rgba(140, 132, 240, .18); transition: box-shadow .3s; }
+[data-testid="stSlider"] [role="slider"]:hover { box-shadow: 0 0 0 10px rgba(140, 132, 240, .22); }
+
+/* ------------------------------------------------- containers & data -- */
+[data-testid="stDataFrame"], [data-testid="stTable"] { border-radius: 16px; overflow: hidden; box-shadow: var(--qv-shadow); border: 1px solid rgba(255, 255, 255, .6); }
+[data-testid="stExpander"] details { border-radius: var(--qv-radius) !important; background: var(--qv-surface); border: 1px solid rgba(255, 255, 255, .6) !important; box-shadow: var(--qv-shadow); }
+[data-testid="stAlert"] { border-radius: 16px; border: 1px solid rgba(255, 255, 255, .6); box-shadow: var(--qv-shadow); }
+[data-testid="stCode"] pre, .stCode pre { background: var(--qv-surface2) !important; border-radius: 16px !important; border: 1px solid var(--qv-line); }
+[data-testid="stCode"] code { color: var(--qv-ink) !important; background: transparent !important; }
+[data-testid="stImage"] img { border-radius: 16px; box-shadow: var(--qv-shadow); }
+[data-testid="stPlotlyChart"], [data-testid="stVegaLiteChart"], [data-testid="stArrowVegaLiteChart"] { background: var(--qv-surface); border-radius: var(--qv-radius); padding: 10px; box-shadow: var(--qv-shadow); border: 1px solid rgba(255, 255, 255, .6); }
+.stale-element, [data-stale="true"] { opacity: 1 !important; }
+[data-testid="stSpinner"] > div { color: var(--qv-lav); }
+
+/* Section heading accent. */
+.qv-section { display: flex; align-items: baseline; gap: 14px; margin: .5rem 0 1rem; }
+.qv-section .k { font: 600 11px "JetBrains Mono", monospace; letter-spacing: .24em; text-transform: uppercase; color: var(--qv-lav); }
+.qv-section h2 { margin: 0; font-size: 2rem; }
+.qv-verdict { display: inline-block; font: 700 1.35rem "Space Grotesk", sans-serif; letter-spacing: -.02em; padding: 4px 14px; border-radius: 999px; }
+.qv-verdict.ok { color: var(--qv-mint-d); background: var(--qv-mint-l); }
+.qv-verdict.warn { color: #C0703F; background: #FCE3D3; }
+.qv-verdict.bad { color: var(--qv-coral-d); background: var(--qv-coral-l); }
+
+/* -------------------------------------------------- reveal & cursor -- */
+.qv-reveal { opacity: 0; transform: perspective(1000px) translate3d(0, 34px, 0) rotateX(9deg); transform-origin: 50% 0;
+  transition: opacity .9s var(--qv-ease), transform 1s var(--qv-ease); }
+.qv-reveal.qv-in { opacity: 1; transform: none; }
+html.qv-cursor, html.qv-cursor * { cursor: none !important; }
+#qv-progress { position: fixed; left: 0; right: 0; top: 0; height: 3px; z-index: 2147483600; transform-origin: 0 50%; transform: scaleX(0);
+  background: linear-gradient(90deg, var(--qv-lav), var(--qv-sky), var(--qv-mint)); pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stApp::before, [data-baseweb="tab-panel"], [role="tabpanel"] { animation: none; }
+  .qv-reveal { opacity: 1; transform: none; }
+}
+@media (max-width: 760px) {
+  .block-container, [data-testid="stMainBlockContainer"] { padding-left: 1rem; padding-right: 1rem; }
+}

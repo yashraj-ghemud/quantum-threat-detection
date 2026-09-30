@@ -1,0 +1,63 @@
+/* QVeris design tokens.
+   "Mist" is the original QVeris pastel world (default): nothing is pure white,
+   lavender = Alice/signer, mint = Bob/verified, sky = quantum channel,
+   gold = classical bits, coral = Eve/threat. "Noir" is a dark mission-control
+   variant with the same semantics. */
+:root, [data-theme="mist"] {
+  color-scheme: light;
+  --bg-void: #E1E6F3; --bg-0: #EAEDF7; --bg-1: #EEF0F9; --bg-2: #F3F4FB; --bg-3: #ECEFF9;
+  --glass-1: rgba(243, 244, 251, .72); --glass-2: rgba(246, 247, 253, .9); --glass-edge: rgba(255, 255, 255, .65);
+  --line: rgba(30, 36, 64, .09); --line-strong: rgba(30, 36, 64, .16);
+  --text-0: #1E2440; --text-1: #3B4466; --text-2: #5A6384; --text-3: #8B93B3;
+  --alice: #8C84F0; --diana: #D96BB8; --bob: #3DB892; --charlie: #6DB84A; --erin: #3E9FD6;
+  --quantum: #6FA8F0; --classical: #D9A445; --ok: #2E9E7F; --ok-fill: #4FC3A1; --warn: #E08A55; --threat: #D04E61;
+  --threat-fill: #E8697A; --mallory: #E07A4A; --eve: #2B2742;
+  --lav: #8C84F0; --mint: #4FC3A1; --sky: #6FA8F0; --gold: #E8B860; --peach: #F4A77A; --coral: #E8697A;
+  --lav-l: #DCD9FB; --mint-l: #D2F1E7; --sky-l: #D6E6FB; --coral-l: #F9D6DB; --peach-l: #FCE3D3; --gold-l: #F8EBCB;
+  --basis-x: #2E9FD0; --basis-y: #D24C9B; --basis-z: #C9A200;
+  --sev-none: #8B93B3; --sev-low: #6FA8F0; --sev-medium: #D9A445; --sev-high: #E08A55; --sev-critical: #D04E61;
+  --shadow-1: 0 1px 0 rgba(255, 255, 255, .7) inset, 0 1px 2px rgba(30, 36, 64, .05), 0 14px 34px -18px rgba(76, 70, 160, .32);
+  --shadow-2: 0 1px 0 rgba(255, 255, 255, .7) inset, 0 26px 50px -22px rgba(76, 70, 160, .45);
+  --shadow-pop: 0 30px 80px -30px rgba(30, 36, 64, .45), 0 0 0 1px rgba(255, 255, 255, .6) inset;
+  --grad-brand: linear-gradient(120deg, #8C84F0, #6FA8F0 60%, #4FC3A1);
+  --grad-primary: linear-gradient(120deg, #8C84F0, #6FA8F0);
+  --aurora-a: rgba(140, 132, 240, .22); --aurora-b: rgba(111, 168, 240, .2); --aurora-c: rgba(79, 195, 161, .16); --aurora-d: rgba(244, 167, 122, .12);
+  --scrim: rgba(30, 36, 64, .28);
+  --on-accent: #F7F7FD;
+  --code-bg: rgba(140, 132, 240, .1);
+}
+[data-theme="noir"] {
+  color-scheme: dark;
+  --bg-void: #03040A; --bg-0: #060816; --bg-1: #0A0E20; --bg-2: #10152C; --bg-3: #171D3A;
+  --glass-1: rgba(16, 21, 44, .62); --glass-2: rgba(22, 28, 58, .88); --glass-edge: rgba(148, 163, 255, .14);
+  --line: rgba(148, 163, 255, .1); --line-strong: rgba(148, 163, 255, .22);
+  --text-0: #F2F4FF; --text-1: #C3CAEB; --text-2: #8A93BD; --text-3: #5B6390;
+  --alice: #A48CFF; --diana: #FF8AD8; --bob: #2EF2C0; --charlie: #8CF26A; --erin: #6FD6FF;
+  --quantum: #57A9FF; --classical: #FFC75A; --ok: #2EF2C0; --ok-fill: #2EF2C0; --warn: #FF9F5A; --threat: #FF4D6D;
+  --threat-fill: #FF4D6D; --mallory: #FF7A3D; --eve: #FF4D6D;
+  --lav: #A48CFF; --mint: #2EF2C0; --sky: #57A9FF; --gold: #FFC75A; --peach: #FF9F5A; --coral: #FF4D6D;
+  --lav-l: rgba(164, 140, 255, .16); --mint-l: rgba(46, 242, 192, .14); --sky-l: rgba(87, 169, 255, .15);
+  --coral-l: rgba(255, 77, 109, .16); --peach-l: rgba(255, 159, 90, .16); --gold-l: rgba(255, 199, 90, .15);
+  --basis-x: #36C5F0; --basis-y: #F15BB5; --basis-z: #FEE440;
+  --sev-none: #8A93BD; --sev-low: #7AA2FF; --sev-medium: #FFC75A; --sev-high: #FF9F5A; --sev-critical: #FF4D6D;
+  --shadow-1: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 18px 40px -22px rgba(0, 0, 0, .8);
+  --shadow-2: 0 1px 0 rgba(255, 255, 255, .06) inset, 0 30px 60px -24px rgba(0, 0, 0, .9), 0 0 40px -18px rgba(87, 169, 255, .35);
+  --shadow-pop: 0 40px 90px -30px rgba(0, 0, 0, .9), 0 0 0 1px rgba(148, 163, 255, .16) inset;
+  --grad-brand: linear-gradient(120deg, #A48CFF, #57A9FF 60%, #2EF2C0);
+  --grad-primary: linear-gradient(120deg, #7C66F5, #3E8EF7);
+  --aurora-a: rgba(124, 102, 245, .2); --aurora-b: rgba(62, 142, 247, .16); --aurora-c: rgba(46, 242, 192, .09); --aurora-d: rgba(255, 77, 109, .06);
+  --scrim: rgba(2, 3, 10, .6);
+  --on-accent: #FFFFFF;
+  --code-bg: rgba(164, 140, 255, .14);
+}
+:root {
+  --font-display: "Space Grotesk", "Inter Variable", Inter, system-ui, sans-serif;
+  --font-body: "Inter Variable", Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px; --s-6: 24px; --s-7: 32px; --s-8: 40px; --s-9: 48px; --s-10: 64px;
+  --r-xs: 6px; --r-sm: 10px; --r-md: 14px; --r-lg: 20px; --r-xl: 28px; --r-pill: 999px;
+  --dur-fast: 160ms; --dur-base: 260ms; --dur-slow: 420ms; --dur-slower: 700ms;
+  --ease-out: cubic-bezier(.22, 1, .36, 1); --ease-in-out: cubic-bezier(.65, 0, .35, 1); --ease-qv: cubic-bezier(.2, .8, .2, 1);
+  --nav-w: 76px; --top-h: 64px; --bottom-h: 64px;
+  --z-content: 10; --z-sticky: 20; --z-nav: 30; --z-drawer: 40; --z-modal: 50; --z-toast: 60; --z-boot: 80;
+}

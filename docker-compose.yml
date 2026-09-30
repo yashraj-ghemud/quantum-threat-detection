@@ -1,0 +1,10 @@
+services:
+  qveris:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      QVERIS_PRESET: standard
+      QVERIS_ALLOW_TAMPER_DEMO: "true"   # keep the ledger tamper demo for presentations
+    volumes: ["qveris-data:/data"]
+volumes:
+  qveris-data: {}

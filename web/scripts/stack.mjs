@@ -1,0 +1,14 @@
+import { chromium } from '@playwright/test';
+const [,, url, tab] = process.argv;
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--use-gl=swiftshader'] });
+const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+await p.addInitScript(() => { sessionStorage.setItem('qveris.booted', '1'); });
+await p.goto(url); await p.waitForTimeout(2500);
+const cdp = await p.context().newCDPSession(p);
+await cdp.send('Debugger.enable');
+cdp.on('Debugger.paused', (e) => { console.log(e.callFrames.slice(0, 12).map((f) => `${f.functionName || '(anon)'} @ ${f.url.split('/').slice(-2).join('/')}:${f.location.lineNumber + 1}`).join('\n')); process.exit(0); });
+p.getByRole('tab', { name: tab, exact: true }).click({ timeout: 20000 }).catch(() => {});
+await new Promise((r) => setTimeout(r, 3000));
+await cdp.send('Debugger.pause');
+await new Promise((r) => setTimeout(r, 5000));
+console.log('no pause'); process.exit(0);

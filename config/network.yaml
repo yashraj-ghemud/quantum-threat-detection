@@ -1,0 +1,55 @@
+# =============================================================================
+# QVeris Sentinel — network topology
+# =============================================================================
+# Seeded into the database on first start. This is configuration (who the
+# participants are and how they are wired), not measured data.
+#
+# baseline_channel is the physics the simulator applies to a link. The
+# detector never reads it: it measures a baseline during calibration.
+# -----------------------------------------------------------------------------
+
+nodes:
+  - { id: alice,   name: Alice,   role: signer,   label: "Treasury HSM",     color: "#A48CFF", pos: [-6.0, 0.0, -1.5] }
+  - { id: diana,   name: Diana,   role: signer,   label: "Grid Operator",    color: "#FF8AD8", pos: [-4.0, 0.0, 4.5] }
+  - { id: bob,     name: Bob,     role: verifier, label: "Clearing Node",    color: "#2EF2C0", pos: [4.5, 0.0, -4.0] }
+  - { id: charlie, name: Charlie, role: verifier, label: "Audit Node",       color: "#8CF26A", pos: [5.5, 0.0, 1.5] }
+  - { id: erin,    name: Erin,    role: verifier, label: "Regulator Node",   color: "#6FD6FF", pos: [2.0, 0.0, 6.0] }
+  - { id: eve,     name: Eve,     role: adversary, label: "External adversary", color: "#FF4D6D", pos: [0.0, -1.5, 0.0], hidden: true }
+  - { id: mallory, name: Mallory, role: adversary, label: "Rogue signer",     color: "#FF7A3D", pos: [-1.0, -1.5, -6.0], hidden: true }
+
+groups:
+  - { id: g-alice,   signer: alice,   recipients: [bob, charlie] }
+  - { id: g-diana,   signer: diana,   recipients: [charlie, erin] }
+  - { id: g-mallory, signer: mallory, recipients: [bob, charlie], hidden: true, reservoir_target: 0 }
+
+links:
+  # Quantum links: entanglement distribution signer -> verifier.
+  - id: alice-bob
+    kind: quantum
+    a: alice
+    b: bob
+    length_km: 22
+    baseline_channel: [{ type: depolarizing, p: 0.012 }, { type: amplitude_damping, gamma: 0.004 }]
+  - id: alice-charlie
+    kind: quantum
+    a: alice
+    b: charlie
+    length_km: 35
+    baseline_channel: [{ type: depolarizing, p: 0.016 }, { type: amplitude_damping, gamma: 0.006 }]
+  - id: diana-charlie
+    kind: quantum
+    a: diana
+    b: charlie
+    length_km: 18
+    baseline_channel: [{ type: depolarizing, p: 0.010 }, { type: phase_damping, lam: 0.010 }]
+  - id: diana-erin
+    kind: quantum
+    a: diana
+    b: erin
+    length_km: 41
+    baseline_channel: [{ type: depolarizing, p: 0.018 }, { type: amplitude_damping, gamma: 0.008 }]
+  - { id: mallory-bob,     kind: quantum, a: mallory, b: bob,     length_km: 25, hidden: true, baseline_channel: [{ type: depolarizing, p: 0.012 }] }
+  - { id: mallory-charlie, kind: quantum, a: mallory, b: charlie, length_km: 25, hidden: true, baseline_channel: [{ type: depolarizing, p: 0.012 }] }
+  # Classical verifier channels (authenticated; symmetrization and transfer).
+  - { id: bob-charlie,  kind: classical, a: bob,     b: charlie, length_km: 12 }
+  - { id: charlie-erin, kind: classical, a: charlie, b: erin,    length_km: 9 }

@@ -1,0 +1,9 @@
+# QVeris light pastel theme. Colours carry the story's meaning:
+# lavender = Alice/signer, mint = Bob/verified, sky = channel, coral = Eve.
+[theme]
+base = "light"
+primaryColor = "#8C84F0"
+backgroundColor = "#EAEDF7"
+secondaryBackgroundColor = "#E1E6F3"
+textColor = "#1E2440"
+font = "sans serif"
